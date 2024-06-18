@@ -1,10 +1,16 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema
+const Review = require("./review.js")
 const listingSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
   },
   description: String,
+  review:[{
+    type: Schema.Types.ObjectId,
+     ref: 'Review'
+  }],
   image: {
     type: String,
     default:
@@ -23,4 +29,10 @@ const listingSchema = new mongoose.Schema({
   country: String,
 });
 const listing  = mongoose.model('listing', listingSchema);
+
+listingSchema.post('findOneAndDelete', async function (doc) {
+    const listing = doc;
+    await Review.deleteMany({ _id: { $in: listing.review } });
+});
+
 module.exports= listing;

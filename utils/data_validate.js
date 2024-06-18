@@ -9,4 +9,11 @@ const schema = Joi.object({
     country: Joi.string().required()
 });
 
-module.exports = schema;
+
+const Rschema = Joi.object({
+    comment: Joi.string().required(),
+    rating: Joi.number().required().min(1),
+    });
+
+
+module.exports = {schema , Rschema};

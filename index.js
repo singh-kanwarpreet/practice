@@ -4,24 +4,36 @@ const mongoose = require('mongoose');
 const path = require('path');
 const methodOverride = require('method-override');
 const asyncwrap = require("./utils/asyncwrap");
-const schema = require("./utils/data_validate");
+const {schema} = require("./utils/data_validate");
+const {Rschema} = require("./utils/data_validate");
 const ExpressError = require("./utils/ExpressError");
 const listing = require("./model/listing/listing");
+const Review = require("./model/listing/review");
 
-const schemaValidate = async (req, res, next) => {
+const schemaValidate =  async(req, res, next) => {
 	
     const result = await schema.validate(req.body.listing);
 
     if (result.error) {
 next(new ExpressError(400, result.error.details[0].message)); 
     } else {
-        next(); // Proceed to the next middleware
+        next(); 
     }
     
 
 };
+const reviewValidate =  async(req, res, next) => {
+    
+    const result = await Rschema.validate(req.body.review);
 
+    if (result.error) {
+next(new ExpressError(400, result.error.details[0].message)); 
+    } else {
+        next(); 
+    }
+    
 
+};
 
 
 // Start the server
@@ -71,11 +83,25 @@ app.post("/listing/new/",schemaValidate, asyncwrap(async (req, res, next) => {
     res.redirect("/listing");
 }));
 
+//review add
+
+// Add review to a listing
+app.post("/listing/:id/review", reviewValidate, asyncwrap(async (req, res, next) => {
+    const id = req.params.id;
+    const re = await new Review({...req.body.review});
+    const list = await listing.findById(id);
+    list.review.push(re);
+    await re.save();
+    await list.save();
+    res.status(201).json({ message: 'Review added successfully', reviewId: re._id });
+}));
+
+
 // Show individual item
 app.get("/listing/:id", asyncwrap(async (req, res) => {
     const { id } = req.params;
-    const data = await listing.findById(id);
-    res.render("listing/individual_listing.ejs", { data });
+    const data = await listing.findById(id).populate('review');
+    res.render("listing/individual_listing.ejs",{data});
 }));
 
 // Show form to update individual item
@@ -97,7 +123,24 @@ app.put("/listing/:id",schemaValidate, asyncwrap(async (req, res) => {
 app.delete("/listing/:id/delete", asyncwrap(async (req, res) => {
     const { id } = req.params;
     await listing.findByIdAndDelete(id);
-    res.redirect("/listing");
+   return res.redirect("/listing");
+}));
+
+// Delete review
+app.delete('/listing/:id/reviews/:rid', asyncwrap(async (req, res) => {
+    const { id, rid } = req.params;
+
+   
+    // Remove the review reference from the listing
+    await listing.findByIdAndUpdate(
+        id,
+        { $pull: { review: rid } }
+    );
+console.log(res)
+    // Delete the review document
+    await Review.findByIdAndDelete(rid);
+
+    return res.redirect(`/listing/${id}`);
 }));
 
 // 404 Error handling
@@ -107,7 +150,8 @@ app.all("*", (req, res, next) => {
 
 // Global error handler
 app.use((err, req, res, next) => {
-    let { status = 500, message = "Something went wrong!" } = err;
+
+        let { status = 500, message = "Something went wrong!" } = err;
     res.status(status).render("listing/error",{message});
 });
 
