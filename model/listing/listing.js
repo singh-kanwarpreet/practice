@@ -28,11 +28,13 @@ const listingSchema = new mongoose.Schema({
   location: String,
   country: String,
 });
-const listing  = mongoose.model('listing', listingSchema);
 
 listingSchema.post('findOneAndDelete', async function (doc) {
     const listing = doc;
     await Review.deleteMany({ _id: { $in: listing.review } });
 });
+const listing  = mongoose.model('listing', listingSchema);
+
+
 
 module.exports= listing;
