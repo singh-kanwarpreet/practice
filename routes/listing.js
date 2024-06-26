@@ -36,37 +36,53 @@ router.post("/new/",schemaValidate, asyncwrap(async (req, res, next) => {
    	const data = req.body.listing;
     const re = await new listing({...data});
     await re.save();
+    req.flash("success","New Listing Added");
     res.redirect("/listing");
-}));
-
-// Show individual item
-router.get("/:id", asyncwrap(async (req, res) => {
-    const { id } = req.params;
-    const data = await listing.findById(id).populate('review');
-    res.render("listing/individual_listing.ejs",{data});
-}));
-
-// Show form to update individual item
-router.get("/:id/update", asyncwrap(async (req, res) => {
-    const { id } = req.params;
-    const data = await listing.findById(id);
-    res.render("listing/update_listing.ejs", { data });
 }));
 
 // Update individual item
 router.put("/:id",schemaValidate, asyncwrap(async (req, res) => {
-	res.send("hello")
-    // const { id } = req.params;
-    // const up = req.body.listing;
-    // await listing.findByIdAndUpdate(id, { ...up });
-    // res.redirect(`/listing/${id}`);
+    const { id } = req.params;
+    const up = req.body.listing;
+   const listing =  await listing.findByIdAndUpdate(id, { ...up });
+    req.flash("success","Listing Updated");
+    res.redirect(`/listing/${id}`);
 }));
 
 // Delete individual item
 router.delete("/:id/delete", asyncwrap(async (req, res) => {
     const { id } = req.params;
     await listing.findByIdAndDelete(id);
+    req.flash("success","Listing Deleted");
    return res.redirect("/listing");
 }));
+
+// Show individual item
+router.get("/:id", asyncwrap(async (req, res) => {
+    const { id } = req.params;
+    const data = await listing.findById(id).populate('review');
+    if (!data) {
+        req.flash("error","Listing you requested does not exist")
+        res.redirect("/listing")
+    } else {
+     res.render("listing/individual_listing.ejs",{data});   
+    }
+    
+}));
+
+// Show form to update individual item
+router.get("/:id/update", asyncwrap(async (req, res) => {
+    const { id } = req.params;
+    const data = await listing.findById(id);
+    if (!data) {
+        req.flash("error","Listing you requested does not exist");
+        res.redirect("/listing");
+    } else {
+        res.render("listing/update_listing.ejs", { data });
+    }
+    
+}));
+
+
 
 module.exports = router;

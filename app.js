@@ -2,28 +2,29 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const path = require('path');
+const User = require('./model/listing/user')
 const methodOverride = require('method-override');
 const asyncwrap = require("./utils/asyncwrap");
-const {Rschema} = require("./utils/data_validate");
 const ExpressError = require("./utils/ExpressError");
-const Review = require("./model/listing/review");
-const listing = require('./routes/listing');
-
-app.use("/listing",listing);
-
-const reviewValidate =  async(req, res, next) => {
-    
-    const result = await Rschema.validate(req.body.review);
-
-    if (result.error) {
-next(new ExpressError(400, result.error.details[0].message)); 
-    } else {
-        next(); 
-    }
-    
-
-};
-
+const listingRoute = require('./routes/listing');
+const reviewsRoute = require('./routes/reviews');
+const userRoute = require('./routes/user');
+const session = require('express-session');
+const flash = require('connect-flash');
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+const sessionOptions = {
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie:{
+    expires: Date.now()+7*24*60*60,
+    maxAge: 7*24*60*60,
+    httpOnly: true
+  }
+} 
 
 // Start the server
 const PORT = 8080;
@@ -33,12 +34,29 @@ app.listen(PORT, () => {
 
 
 // Middleware
-app.use(methodOverride('_method'));
+
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.engine('ejs', require('ejs-mate'));
+app.use(session(sessionOptions));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+app.use((req,res,next)=>{
+    res.locals.success= req.flash("success");
+    res.locals.error= req.flash("error");
+    next();
+})
+
+
+
+app.use("/listing",listingRoute);
+app.use("/listing/:id/review",reviewsRoute);
+app.use("/listing/user",userRoute);
 
 // Database connection
 async function main() {
@@ -51,37 +69,11 @@ async function main() {
 }
 main();
 
-// Routes
 
 
-//review add
-
-// Add review to a listing
-app.post("/listing/:id/review", reviewValidate, asyncwrap(async (req, res, next) => {
-    const id = req.params.id;
-    const re = await new Review({...req.body.review});
-    const list = await listing.findById(id);
-    list.review.push(re);
-    await re.save();
-    await list.save();
-    res.status(201).json({ message: 'Review added successfully', reviewId: re._id });
-}));
 
 
-// Delete review
-app.delete('/:id/reviews/:rid', asyncwrap(async (req, res) => {
-    const { id, rid } = req.params;
 
- 
-    await listing.findByIdAndUpdate(
-        id,
-        { $pull: { review: rid } }
-    );
-
-    await Review.findByIdAndDelete(rid);
-
-    return res.redirect(`/${id}`);
-}));
 
 // 404 Error handling
 app.all("*", (req, res, next) => {

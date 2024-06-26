@@ -54,7 +54,7 @@
       <div class="card-body">
         <h5 class="card-title">John Paul</h5>
         <p class="card-text"><%=i.comment%><br><br><%=i.rating%> stars</p>
-        <form method="POST" action="/listing/<%= data.id %>/reviews/<%= i.id %>?_method=DELETE">
+        <form method="POST" action="/listing/<%= data.id %>/review/<%= i.id %>?_method=DELETE">
     <button type="submit" class="btn btn-dark">Delete</button>
 </form>
 
