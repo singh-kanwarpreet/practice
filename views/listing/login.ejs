@@ -3,21 +3,13 @@
 <body>
 <div class="row ms-0 me-0 mt-3 mb-3">
   <div class="col-6 offset-3">
-    <h3>Sign Up</h3>
-    <form class="needs-validation" novalidate action="/listing/user/new" method="post">
+    <h3>Log In</h3>
+    <form class="needs-validation" novalidate action="/listing/user/login" method="post">
     <div class="mb-3">
         <label for="user" class="form-label">Username</label>
         <input type="text" class="form-control" id="user" name="username" aria-describedby="usernameHelp" required>
         <div class="invalid-feedback">
             Please provide a username.
-        </div>
-    </div>
-    <div class="mb-3">
-        <label for="email" class="form-label">Email address</label>
-        <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" required>
-        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-        <div class="invalid-feedback">
-            Please provide a valid email address.
         </div>
     </div>
     <div class="mb-3">

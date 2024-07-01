@@ -46,12 +46,14 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
+
+
 app.use((req,res,next)=>{
-    res.locals.success= req.flash("success");
+    res.locals.success = req.flash("success");
     res.locals.error= req.flash("error");
+    res.locals.auth = req.user; 
     next();
 })
-
 
 
 app.use("/listing",listingRoute);

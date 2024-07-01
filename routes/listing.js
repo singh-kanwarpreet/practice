@@ -4,6 +4,7 @@ const asyncwrap = require("../utils/asyncwrap");
 const {schema} = require("../utils/data_validate");
 const ExpressError = require("../utils/ExpressError");
 const listing = require("../model/listing/listing");
+const {auth} = require("../middleware/auth.js")
 
 
 const schemaValidate =  async(req, res, next) => {
@@ -19,6 +20,7 @@ next(new ExpressError(400, result.error.details[0].message));
 
 };
 
+
 // Root route - list all items
 router.get("/", asyncwrap(async (req, res) => {
     const data = await listing.find();
@@ -26,8 +28,11 @@ router.get("/", asyncwrap(async (req, res) => {
 }));
 
 // Show form to create new item
-router.get("/new/form", asyncwrap((req, res) => {
-    res.render("listing/create_new.ejs");
+router.get("/new/form", auth,asyncwrap((req, res) => {
+
+        res.render("listing/create_new.ejs");
+    
+    
 }));
 
 // Create new item
@@ -42,11 +47,16 @@ router.post("/new/",schemaValidate, asyncwrap(async (req, res, next) => {
 
 // Update individual item
 router.put("/:id",schemaValidate, asyncwrap(async (req, res) => {
-    const { id } = req.params;
+    if (req.user) {
+        const { id } = req.params;
     const up = req.body.listing;
    const listing =  await listing.findByIdAndUpdate(id, { ...up });
     req.flash("success","Listing Updated");
     res.redirect(`/listing/${id}`);
+    } else {
+        res.redirect("/listing/user/login");
+    }
+    
 }));
 
 // Delete individual item
@@ -71,7 +81,7 @@ router.get("/:id", asyncwrap(async (req, res) => {
 }));
 
 // Show form to update individual item
-router.get("/:id/update", asyncwrap(async (req, res) => {
+router.get("/:id/update",auth, asyncwrap(async (req, res) => {
     const { id } = req.params;
     const data = await listing.findById(id);
     if (!data) {
