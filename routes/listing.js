@@ -29,6 +29,7 @@ router.get("/", asyncwrap(listingCode.index));
 router.route("/new")
 .get(auth, asyncwrap(listingCode.createForm))
 .post(
+    // schemaValidate, asyncwrap(listingCode.postNew)
      upload.single('listing[image]'),(req,res)=>{
             res.send(req.file)
      }
