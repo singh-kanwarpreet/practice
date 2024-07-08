@@ -1,98 +1,48 @@
 const express = require('express');
-const router = express.Router({mergeParams:true});
+const router = express.Router({ mergeParams: true });
 const asyncwrap = require("../utils/asyncwrap");
-const {schema} = require("../utils/data_validate");
+const { schema } = require("../utils/data_validate");
 const ExpressError = require("../utils/ExpressError");
 const listing = require("../model/listing/listing");
-const {auth} = require("../middleware/auth.js")
+const { auth, authcheck } = require("../middleware/auth.js");
+const listingCode = require("../controllers/listing.js");
 
-
-const schemaValidate =  async(req, res, next) => {
-	
+const cloudinary = require('cloudinary').v2;
+const multer  = require('multer')
+const storage = require('../cloudconfig/cloudconfig.js');
+const upload = multer({ storage })
+const schemaValidate = async (req, res, next) => {
     const result = await schema.validate(req.body.listing);
 
     if (result.error) {
-next(new ExpressError(400, result.error.details[0].message)); 
+        next(new ExpressError(400, result.error.details[0].message));
     } else {
-        next(); 
+        next();
     }
-    
-
 };
 
 
+
 // Root route - list all items
-router.get("/", asyncwrap(async (req, res) => {
-    const data = await listing.find();
-    res.render("listing/listing.ejs", { data });
-}));
+router.get("/", asyncwrap(listingCode.index));
 
-// Show form to create new item
-router.get("/new/form", auth,asyncwrap((req, res) => {
+router.route("/new")
+.get(auth, asyncwrap(listingCode.createForm))
+.post(
+     upload.single('listing[image]'),(req,res)=>{
+            res.send(req.file)
+     }
+    );
 
-        res.render("listing/create_new.ejs");
-    
-    
-}));
-
-// Create new item
-router.post("/new/",schemaValidate, asyncwrap(async (req, res, next) => {
-   	
-   	const data = req.body.listing;
-    const re = await new listing({...data});
-    await re.save();
-    req.flash("success","New Listing Added");
-    res.redirect("/listing");
-}));
-
-// Update individual item
-router.put("/:id",schemaValidate, asyncwrap(async (req, res) => {
-    if (req.user) {
-        const { id } = req.params;
-    const up = req.body.listing;
-   const listing =  await listing.findByIdAndUpdate(id, { ...up });
-    req.flash("success","Listing Updated");
-    res.redirect(`/listing/${id}`);
-    } else {
-        res.redirect("/listing/user/login");
-    }
-    
-}));
+router.route("/:id/update")
+.get(auth, asyncwrap(listingCode.updateForm))
+.put(schemaValidate, authcheck, asyncwrap(listingCode.updateDatabase));
 
 // Delete individual item
-router.delete("/:id/delete", asyncwrap(async (req, res) => {
-    const { id } = req.params;
-    await listing.findByIdAndDelete(id);
-    req.flash("success","Listing Deleted");
-   return res.redirect("/listing");
-}));
+router.delete("/:id/delete", asyncwrap(listingCode.deleteItem));
 
 // Show individual item
-router.get("/:id", asyncwrap(async (req, res) => {
-    const { id } = req.params;
-    const data = await listing.findById(id).populate('review');
-    if (!data) {
-        req.flash("error","Listing you requested does not exist")
-        res.redirect("/listing")
-    } else {
-     res.render("listing/individual_listing.ejs",{data});   
-    }
-    
-}));
-
-// Show form to update individual item
-router.get("/:id/update",auth, asyncwrap(async (req, res) => {
-    const { id } = req.params;
-    const data = await listing.findById(id);
-    if (!data) {
-        req.flash("error","Listing you requested does not exist");
-        res.redirect("/listing");
-    } else {
-        res.render("listing/update_listing.ejs", { data });
-    }
-    
-}));
-
+router.get("/:id", asyncwrap(listingCode.showIndividual));
 
 
 module.exports = router;

@@ -11,6 +11,10 @@ const listingSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
      ref: 'Review'
   }],
+  owner:{
+    type: Schema.Types.ObjectId,
+     ref: 'User'
+  },
   image: {
     type: String,
     default:
@@ -25,9 +29,12 @@ const listingSchema = new mongoose.Schema({
   default:0
 
   } ,
+
   location: String,
   country: String,
-});
+}
+
+);
 
 listingSchema.post('findOneAndDelete', async function (doc) {
     const listing = doc;

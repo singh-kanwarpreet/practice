@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -26,14 +28,15 @@ const sessionOptions = {
   }
 } 
 
+
 // Start the server
 const PORT = 8080;
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
 
+// Middleware     // schemaValidate, asyncwrap(listingCode.postNew)
 
-// Middleware
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
@@ -71,12 +74,6 @@ async function main() {
 }
 main();
 
-
-
-
-
-
-
 // 404 Error handling
 app.all("*", (req, res, next) => {
     throw new ExpressError(404, "Page not found");
@@ -87,6 +84,7 @@ app.use((err, req, res, next) => {
 
         let { status = 500, message = "Something went wrong!" } = err;
     res.status(status).render("listing/error",{message});
+    console.log(err)
 });
 
 
