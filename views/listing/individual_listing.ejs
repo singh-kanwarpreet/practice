@@ -6,7 +6,7 @@
 <h3 ><%=data.title%></h3>
 </div>
 <div class="card col-6 offset-3"  >
-  <img src="<%=data.image%>" class="card-img-top" alt="listing image" style="height: 30vh;width:100%">
+  <img src="<%=data.image.url%>" class="card-img-top" alt="listing image" style="height: 30vh;width:100%">
   <div class="card-body">
 
     <p class="card-text">
@@ -68,9 +68,11 @@
 </form>
 </div>
 <%}%>
+<%if(data.review.length>0){%>
   <div class="col-6 offset-3 mt-5">
   <hr>
   <h3>All Reviews</h3><br><br>
+  <%}%>
   <div class="row ms-0 me-0 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-xm-1">
     <%for(i of data.review){%>
     

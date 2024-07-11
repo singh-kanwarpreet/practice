@@ -2,7 +2,7 @@
 <body>
 <div class="row ms-0 me-0">
     <div class="offset-2 col-8">
-        <form method="post" action="/listing/<%= data.id %>/update?_method=PUT" class="needs-validation" novalidate>
+        <form method="post" action="/listing/<%= data.id %>/update?_method=PUT" class="needs-validation" novalidate enctype="multipart/form-data">
         <br><br>
             <h2>Create Listing</h2>
             <div class="mb-3">
@@ -18,9 +18,10 @@
             </div>
 
             <div class="mb-3">
+            <h7>Original Image</h7> <br>
+                <img src= <%=updatedurl%>><br>
                 <label for="image" class="form-label">Image:</label>
-                <input class="form-control" type="text" name="listing[image]" id="image" required value="<%= data.image %>">
-                <div class="invalid-feedback">Please enter an image URL.</div>
+                <input class="form-control" type="file" name="listing[image]" id="image">
             </div>
 
             <div class="row mb-3">
@@ -42,7 +43,7 @@
                 <div class="invalid-feedback">Please enter a country.</div>
             </div>
 
-            <button class="btn btn-dark btn-color" type="submit">Create</button>
+            <button class="btn btn-dark btn-color" type="submit">Update</button>
         </form>
         <br><br>
     </div>

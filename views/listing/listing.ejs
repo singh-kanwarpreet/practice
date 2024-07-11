@@ -1,22 +1,106 @@
 <% layout('/layout/boilerplate') -%>
+<br>
 
-  <br>
-<h3 class="ms-4">LISTINGS</h3>    
-<div class="row  row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-xs-1 ps-3 ms-0 pe-3 me-0" >
-<% for(i of data){%>
-<a href="/listing/<%=i._id%>" style=" text-decoration: none;">
-<div class="card col " >
-  <img src= <%=i.image%> class="card-img-top" alt="..." style="height: 20rem;">
-  <div class="card-img-overlay"></div>
-  <div class="card-body">
-    <p class="card-text">
-    <b><%= i.title %></b><br>
-    &#8377 <%= i.price.toLocaleString('en-IN') %>/night
-    </p>
-  </div>
+<div class="filter" >
+    <div class="icon">
+        <i class="fa-solid fa-fire"></i>
+        <p>Iconic</p>
+    </div>
+    <div class="icon">
+        <i class="fa-solid fa-heart"></i>
+        <p>Heart</p>
+    </div>
+    <div class="icon">
+        <i class="fa-solid fa-star"></i>
+        <p>Star</p>
+    </div>
+    <div class="icon">
+        <i class="fa-solid fa-music"></i>
+        <p>Music</p>
+    </div>
+    <div class="icon">
+        <i class="fa-solid fa-bell"></i>
+        <p>Bell</p>
+    </div>
+    <div class="icon">
+        <i class="fa-solid fa-camera"></i>
+        <p>Camera</p>
+    </div>
+    <div class="icon">
+        <i class="fa-solid fa-envelope"></i>
+        <p>Envelope</p>
+    </div>
+    <div class="icon">
+        <i class="fa-solid fa-globe"></i>
+        <p>Globe</p>
+    </div>
+    <div class="icon">
+        <i class="fa-solid fa-car"></i>
+        <p>Car</p>
+    </div>
 </div>
 
-</a>
-<%}%>
+<div class="drop" style="display:none">
+    <div style="width:2px; margin-bottom:0.5rem">
+        <i class="fa-solid fa-bars"></i>
+    </div>
+    <div class="drop-icon">
+        <div class="icon">
+            <i class="fa-solid fa-fire"></i>
+            <p>Iconic</p>
+        </div>
+        <div class="icon">
+            <i class="fa-solid fa-heart"></i>
+            <p>Heart</p>
+        </div>
+        <div class="icon">
+            <i class="fa-solid fa-star"></i>
+            <p>Star</p>
+        </div>
+        <div class="icon">
+            <i class="fa-solid fa-music"></i>
+            <p>Music</p>
+        </div>
+        <div class="icon">
+            <i class="fa-solid fa-bell"></i>
+            <p>Bell</p>
+        </div>
+        <div class="icon">
+            <i class="fa-solid fa-camera"></i>
+            <p>Camera</p>
+        </div>
+        <div class="icon">
+            <i class="fa-solid fa-envelope"></i>
+            <p>Envelope</p>
+        </div>
+        <div class="icon">
+            <i class="fa-solid fa-globe"></i>
+            <p>Globe</p>
+        </div>
+        <div class="icon">
+            <i class="fa-solid fa-car"></i>
+            <p>Car</p>
+        </div>
+    </div>
 </div>
-</body>
+
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-xs-1 ps-3 ms-0 pe-3 me-0">
+    <% for (let i of data) { %>
+    <a href="/listing/<%= i._id %>" style="text-decoration: none;">
+        <div class="card col">
+            <img src="<%= i.image.url %>" class="card-img-top" alt="..." style="height: 20rem;">
+            <div class="card-img-overlay"></div>
+            <div class="card-body">
+                <p class="card-text">
+                    <b><%= i.title %></b><br>
+                    &#8377 <%= i.price.toLocaleString('en-IN') %>/night
+                </p>
+            </div>
+        </div>
+    </a>
+    <% } %>
+</div>
+<script src="/js/sricpt-icon.js"></script>
+<script>
+    
+</script>

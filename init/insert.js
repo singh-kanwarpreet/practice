@@ -1,18 +1,26 @@
-const mongoose = require('mongoose');
-let data = require("./data.js");
-const listing = require("../model/listing/listing");
+const mongoose = require("mongoose");
+const {data} = require("./data.js");
+const Listing = require("../model/listing/listing.js");
+
+const MONGO_URL = "mongodb://127.0.0.1:27017/book";
+
 main()
-.then(()=>console.log("connected successfuly"))
-.catch(err => console.log(err));
+  .then(() => {
+    console.log("connected to DB");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/book');
-}
-const insert = async ()=>{
-	await listing.findByIdAndDelete("66855572b5d2bfb48b217b19");
- // data = data.map((obj) => ({
- //  ...obj,owner: '6683f3e3ec377fbf54e387e2',}));	
- //  const res = await listing.insertMany(data);
-	console.log("jbjk")
+  await mongoose.connect(MONGO_URL);
 }
 
-insert();
+const initDB = async () => {
+           await Listing.insertMany(data);
+
+};
+
+initDB();
+
+ 
