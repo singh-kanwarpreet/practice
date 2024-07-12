@@ -31,14 +31,14 @@ async function main() {
 main();
 
 const store = MongoStore.create({
-    mongoUrl: process.env.ATLAS_MONGO,
+    mongoUrl:process.env.ATLAS_MONGO,
     crypto:{
           secret: 'keyboard cat',
 
     },
     touchAfter:24*3600,
   })
-store.on("error",()=>console.log("the error is",err))
+store.on("error", (err) => console.log("Session store error:", err));
 const sessionOptions = {
     store,
   secret: 'keyboard cat',
