@@ -6,6 +6,7 @@ module.exports.loginForm = (req, res) => res.render("listing/login.ejs");
 
 module.exports.login = (req, res) => {
 	req.flash("success", "Welcome back to Wanderlust");
+	console.log(res.locals.url)
 	res.redirect(res.locals.url);
 };
 
@@ -21,7 +22,7 @@ module.exports.signUp = async (req, res) => {
 		});
 	} catch (er) {
 		req.flash("error", er.message);
-		res.redirect("/listing/user/new");
+		res.redirect("/new");
 	}
 };
 

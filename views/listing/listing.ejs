@@ -1,6 +1,6 @@
 <% layout('/layout/boilerplate') -%>
 <br>
-
+<div class="d-flex">
 <div class="filter" >
     <div class="icon">
         <i class="fa-solid fa-fire"></i>
@@ -38,11 +38,16 @@
         <i class="fa-solid fa-car"></i>
         <p>Car</p>
     </div>
+    </div>
+    <div class="form-check form-switch .float-right me-4"id="flexSwitchCheckDefault" >
+  <input class="form-check-input tax" type="checkbox" role="switch" >
+  <label class="form-check-label" for="flexSwitchCheckDefault">Including Taxes</label>
 </div>
-
-<div class="drop" style="display:none">
+</div>
+<div class="d-flex" id="drop" >
+<div class="drop" >
     <div style="width:2px; margin-bottom:0.5rem">
-        <i class="fa-solid fa-bars"></i>
+        <button type="button" class="btn btn-danger">More Options!</button>
     </div>
     <div class="drop-icon">
         <div class="icon">
@@ -82,6 +87,11 @@
             <p>Car</p>
         </div>
     </div>
+     </div>
+    <div class="form-check form-switch .float-right" id="myButton">
+  <input class="form-check-input tax" type="checkbox" role="switch" id="flexSwitch">
+  <label class="form-check-label" for="flexSwitchCheckDefault">Including Taxes</label>
+</div>
 </div>
 
 <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-xs-1 ps-3 ms-0 pe-3 me-0">
@@ -93,14 +103,12 @@
             <div class="card-body">
                 <p class="card-text">
                     <b><%= i.title %></b><br>
-                    &#8377 <%= i.price.toLocaleString('en-IN') %>/night
+                    &#8377 <%= i.price.toLocaleString('en-IN') %>/night&nbsp;&nbsp;&nbsp;<b class="display">+18% GST</b>
                 </p>
             </div>
         </div>
     </a>
     <% } %>
 </div>
-<script src="/js/sricpt-icon.js"></script>
-<script>
-    
-</script>
+<script src="/js/script-icon.js"></script>
+

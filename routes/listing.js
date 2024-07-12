@@ -4,7 +4,7 @@ const asyncwrap = require("../utils/asyncwrap");
 const { schema } = require("../utils/data_validate");
 const ExpressError = require("../utils/ExpressError");
 const listing = require("../model/listing/listing");
-const { auth, authcheck } = require("../middleware/auth.js");
+const { auth, authcheck ,saveUrl} = require("../middleware/auth.js");
 const listingCode = require("../controllers/listing.js");
 
 const cloudinary = require('cloudinary').v2;
@@ -27,11 +27,24 @@ const schemaValidate = async (req, res, next) => {
 router.get("/", asyncwrap(listingCode.index));
 
 router.route("/new")
-.get(auth, asyncwrap(listingCode.createForm))
+.get(auth,asyncwrap(listingCode.createForm))
 .post(
         upload.single('listing[image]'),schemaValidate, asyncwrap(listingCode.postNew)
      
     );
+
+router.post("/search",asyncwrap(async(req,res)=>{
+    let {search}= req.body;
+    
+let data = await listing.find({country:search});
+if (data.length>0) {
+    return res.render("listing/search.ejs",{data})
+}
+        req.flash("error","Listing Not Found")
+        res.redirect("/listing")
+  
+        
+}))
 
 router.route("/:id/update")
 .get(auth, asyncwrap(listingCode.updateForm))

@@ -99,18 +99,32 @@
 .btn-width {
     width: 6rem;
 }
-
+.display{
+    display: none;
+}
+#drop{
+    display: none !important;
+}
+.filter{
+    flex: 1;
+}
 @media only screen and (max-width: 597px) {
     .filter {
         display: none !important;
     }
+#drop{
+            display: flex !important;
 
+}
     .drop {
         width: 64%;
-        margin: auto !important;
+        margin: 5px 8px 9px !important;
         display: block !important;
     }
-    
+    #flexSwitchCheckDefault{
+                display: none !important;
+
+    }
     .drop-icon {
         display: none;
         width: 100%;
@@ -118,3 +132,4 @@
         justify-content: space-around;
     }
 }
+

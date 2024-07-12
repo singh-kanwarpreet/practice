@@ -12,12 +12,35 @@ const listingRoute = require('./routes/listing');
 const reviewsRoute = require('./routes/reviews');
 const userRoute = require('./routes/user');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+// Database connection
+async function main() {
+    try {
+        await mongoose.connect(process.env.ATLAS_MONGO);
+        console.log("Connected to MongoDB");
+    } catch (err) {
+        console.error("MongoDB connection error:", err);
+    }
+}
+main();
+
+const store = MongoStore.create({
+    mongoUrl: process.env.ATLAS_MONGO,
+    crypto:{
+          secret: 'keyboard cat',
+
+    },
+    touchAfter:24*3600,
+  })
+store.on("error",()=>console.log("the error is",err))
 const sessionOptions = {
+    store,
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true,
@@ -59,25 +82,19 @@ app.use((req,res,next)=>{
 })
 
 
+
 app.use("/listing",listingRoute);
 app.use("/listing/:id/review",reviewsRoute);
-app.use("/listing/user",userRoute);
+app.use("/",userRoute);
 
-// Database connection
-async function main() {
-    try {
-        await mongoose.connect('mongodb://127.0.0.1:27017/book');
-        console.log("Connected to MongoDB");
-    } catch (err) {
-        console.error("MongoDB connection error:", err);
-    }
-}
-main();
+
 
 // 404 Error handling
-app.all("*", (req, res, next) => {
-    throw new ExpressError(404, "Page not found");
+ 
+app.all("*",(req,res,next)=>{
+    next(new ExpressError(404,"Page Not Found!"));
 });
+
 
 // Global error handler
 app.use((err, req, res, next) => {

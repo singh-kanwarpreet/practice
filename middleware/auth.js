@@ -5,7 +5,7 @@ module.exports.auth = (req,res,next)=>{
     if (!res.locals.auth){
        req.flash("error","You must logged in");
        req.session.url = req.originalUrl;
-       return res.redirect("/listing/user/login");
+       return res.redirect("/login");
         } 
     next();
 }

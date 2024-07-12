@@ -5,7 +5,12 @@ module.exports.index = async (req, res) => {
     res.render("listing/listing.ejs", { data });
 }
 
-module.exports.createForm = (req, res) => res.render("listing/create_new.ejs");
+module.exports.createForm = (req, res) => {
+    if(req.user){return res.render("listing/create_new.ejs");
+}
+res.redirect("/login")
+}
+
 
 module.exports.postNew = async (req, res, next) => {
     const data = req.body.listing;

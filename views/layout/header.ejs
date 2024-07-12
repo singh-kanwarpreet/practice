@@ -1,3 +1,11 @@
+<style type="text/css">
+    .search-style{
+        background: #fe424d;
+        color: white;
+    }
+</style>
+
+
 <nav class="navbar navbar-expand-md py-3 border-bottom sticky-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="/listing"><i class="fa-solid fa-compass"></i></a>
@@ -9,25 +17,26 @@
         <li class="nav-item">
           <a class="nav-link active " aria-current="page" href="/listing">Explore</a>
         </li>
-        
-        
         </ul>
-        
+        <form class="d-flex ms-auto" role="search" method="post" action="/listing/search">
+        <input class="form-control me-2 ps-4 pe-3 " type="search" placeholder="Search Destination" name="search" aria-label="Search" style="border-radius:14rem; font-size:1rem">
+        <button class="btn btn-outline search-style ps-3 pe-3" type="submit" style="border-radius:14rem"><i class="fa-solid fa-magnifying-glass d-inline me-3"></i>Search</button>
+      </form>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
           <a class="nav-link " href="/listing/new">Airbnb Your Home</a>
         </li>
         <%if(!auth){%>
           <li class="nav-item">
-          <a class="nav-link fw-bold" href="/listing/user/new"><b>Sign Up</b></a>
+          <a class="nav-link fw-bold" href="/new"><b>Sign Up</b></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link fw-bold" href="/listing/user/login"><b>Login</b></a>
+          <a class="nav-link fw-bold" href="/login"><b>Login</b></a>
         </li>
         <%}%>
         <%if(auth){%>
         <li class="nav-item">
-          <a class="nav-link fw-bold" href="/listing/user/logout">Logout</a>
+          <a class="nav-link fw-bold" href="/logout">Logout</a>
         </li>
         <%}%>
         </ul>

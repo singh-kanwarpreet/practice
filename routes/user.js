@@ -17,7 +17,7 @@ router.route("/login")
 
   saveUrl,
   passport.authenticate('local', {
-    failureRedirect: '/listing/user/login',
+    failureRedirect: '/login',
     failureFlash: true
   }),
   userCode.login
